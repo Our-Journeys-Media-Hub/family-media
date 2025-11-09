@@ -41,15 +41,16 @@ require_login();
 
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/js/jsvectormap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/maps/world.js"></script>
+<script src="/family-media/public/js/countryNames.js"></script>
 <script>
-  // Set CSS var to real nav height so the map fills the rest perfectly
+
   const nav = document.querySelector('nav');
   const setNavH = () => {
     document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
   };
-  setNavH(); addEventListener('resize', setNavH);
+  setNavH();
+  addEventListener('resize', setNavH);
 
-  // Init the full-page map
   const map = new jsVectorMap({
     selector: '#worldmap',
     map: 'world',
@@ -59,11 +60,31 @@ require_login();
       hover:   { fill: '#ffffffff' }
     },
     onRegionTooltipShow: (tooltip, code) => {
-      tooltip.text(map.getRegionName(code));
+      let regionName = code;
+      try {
+        const worldMap = window.jsVectorMap?.maps?.world;
+        if (worldMap && worldMap.paths[code]) {
+          regionName = worldMap.paths[code].name;
+        }
+      } catch (e) {
+        console.warn("Unable to retrieve the country name for:", code);
+      }
+      tooltip.text(regionName);
+    },
+    onRegionClick: (event, code) => {
+      const regionName = countryNames[code] || code;
+      try {
+        const worldMap = window.jsVectorMap?.maps?.world;
+        if (worldMap && worldMap.paths[code]) {
+          regionName = worldMap.paths[code].name;
+        }
+      } catch (e) {
+        console.warn("Unable to retrieve the country name for:", code);
+      }
+      window.location.href = `/family-media/public/ViewCountry/country.php?name=${encodeURIComponent(regionName)}`;
     }
   });
 
-  // Keep map responsive
   addEventListener('resize', () => map.updateSize());
 </script>
 </body>
