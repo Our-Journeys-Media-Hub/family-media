@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$errors) {
       $pdo->commit();
       $joined = true;
 
-      header('Location: /family-media/public/index.php?view=family&family_id='.$familyId);
+      header('Location: /Journeys-media/public/index.php?view=family&family_id='.$familyId);
       exit;
     } catch (Throwable $e) {
       $pdo->rollBack();
@@ -89,6 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$errors) {
   </form>
 <?php endif; ?>
 
-<p><a href="/family-media/public/index.php">Back</a></p>
+<p><a href="/Journeys-media/public/index.php">Back</a></p>
 </body>
 </html>

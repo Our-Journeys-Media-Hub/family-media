@@ -35,7 +35,7 @@ function force_logout_and_redirect() {
     setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
   }
   session_destroy();
-  header('Location: /family-media/public/login.php?expired=1');
+  header('Location: /journeys-media/public/login.php?expired=1');
   exit;
 }
 

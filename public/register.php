@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8">
   <title>Create account</title>
-  <link rel="stylesheet" href="/family-media/public/css/app.css">
+  <link rel="stylesheet" href="/Journeys-media/public/css/app.css">
   <style>
     .center-wrap{min-height:100vh;display:grid;place-items:center;padding:24px}
     .auth-card{width:min(460px, 92vw)}
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php if ($done): ?>
         <h2 style="margin-top:0">Account created 🎉</h2>
         <div class="alert alert-success">Your account has been created successfully.</div>
-        <p><a class="btn" href="/family-media/public/login.php">Go to login</a></p>
+        <p><a class="btn" href="/Journeys-media/public/login.php">Go to login</a></p>
       <?php else: ?>
         <h2 style="margin-top:0">Create account</h2>
 
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
           <div class="auth-footer">
-            <a class="link" href="/family-media/public/login.php">I have an account</a>
+            <a class="link" href="/Journeys-media/public/login.php">I have an account</a>
             <button type="submit" class="btn">Register</button>
           </div>
         </form>

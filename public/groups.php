@@ -123,16 +123,16 @@ function accept_link(string $token, string $scheme, string $host, string $base):
 <head>
   <meta charset="utf-8">
   <title>Groups</title>
-  <link rel="stylesheet" href="/family-media/public/css/app.css">
+  <link rel="stylesheet" href="/Journeys-media/public/css/app.css">
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <a href="/family-media/public/index.php">Home</a>
-    <a href="/family-media/public/groups.php?view=list">Groups</a>
-    <a href="/family-media/public/groups.php?view=myinvites">My invites</a>
-    <a href="/family-media/public/logout.php">Logout</a>
+    <a href="/Journeys-media/public/index.php">Home</a>
+    <a href="/Journeys-media/public/groups.php?view=list">Groups</a>
+    <a href="/Journeys-media/public/groups.php?view=myinvites">My invites</a>
+    <a href="/Journeys-media/public/logout.php">Logout</a>
   </div>
 </nav>
 
@@ -158,7 +158,7 @@ function accept_link(string $token, string $scheme, string $host, string $base):
               <li>
                 <strong><?= htmlspecialchars($f['family_name']) ?></strong>
                 (<?= htmlspecialchars($f['family_role']) ?>)
-                — <a class="btn btn-secondary" href="/family-media/public/groups.php?view=family&family_id=<?= (int)$f['id'] ?>">Manage</a>
+                — <a class="btn btn-secondary" href="/Journeys-media/public/groups.php?view=family&family_id=<?= (int)$f['id'] ?>">Manage</a>
               </li>
             <?php endforeach; ?>
           </ul>
@@ -201,7 +201,7 @@ function accept_link(string $token, string $scheme, string $host, string $base):
             <?php endforeach; ?>
           </ul>
         <?php endif; ?>
-        <p style="margin-top:8px"><a href="/family-media/public/groups.php?view=myinvites">Open full view</a></p>
+        <p style="margin-top:8px"><a href="/Journeys-media/public/groups.php?view=myinvites">Open full view</a></p>
       </div>
     </div>
   <?php endif; ?>

@@ -7,7 +7,7 @@ require_login();
 <head>
   <meta charset="utf-8">
   <title>World map · full page</title>
-  <link rel="stylesheet" href="/family-media/public/css/app.css">
+  <link rel="stylesheet" href="/Journeys-media/public/css/app.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/css/jsvectormap.min.css">
   <style>
     /* Full-page map below the nav */
@@ -30,10 +30,10 @@ require_login();
 
 <nav>
   <div class="nav-inner">
-    <a href="/family-media/public/index.php">Home</a>
-    <a href="/family-media/public/groups.php?view=list">Groups</a>
-    <a href="/family-media/public/groups.php?view=myinvites">My invites</a>
-    <a href="/family-media/public/logout.php">Logout</a>
+    <a href="/Journeys-media/public/index.php">Home</a>
+    <a href="/Journeys-media/public/groups.php?view=list">Groups</a>
+    <a href="/Journeys-media/public/groups.php?view=myinvites">My invites</a>
+    <a href="/Journeys-media/public/logout.php">Logout</a>
   </div>
 </nav>
 
@@ -41,7 +41,7 @@ require_login();
 
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/js/jsvectormap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/maps/world.js"></script>
-<script src="/family-media/public/js/countryNames.js"></script>
+<script src="/Journeys-media/public/js/countryNames.js"></script>
 <script>
 
   const nav = document.querySelector('nav');
@@ -81,7 +81,7 @@ require_login();
       } catch (e) {
         console.warn("Unable to retrieve the country name for:", code);
       }
-      window.location.href = `/family-media/public/ViewCountry/country.php?name=${encodeURIComponent(regionName)}`;
+      window.location.href = `/Journeys-media/public/ViewCountry/country.php?name=${encodeURIComponent(regionName)}`;
     }
   });
 

@@ -7,7 +7,7 @@ $pdo = db_connect();
 
 function require_login(): void {
   if (empty($_SESSION['user_id'])) {
-    header('Location: /family-media/public/login.php');
+    header('Location: /Journeys-media/public/login.php');
     exit;
   }
 }

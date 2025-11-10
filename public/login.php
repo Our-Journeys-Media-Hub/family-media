@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../lib/auth.php';
 
 $errors = [];
-$redirect = '/family-media/public/index.php'; // Default-Ziel
-if (!empty($_GET['r']) && str_starts_with($_GET['r'], '/family-media/')) {
+$redirect = '/Journeys-media/public/index.php'; // Default-Ziel
+if (!empty($_GET['r']) && str_starts_with($_GET['r'], '/Journeys-media/')) {
   $redirect = $_GET['r']; // nur relative, eigene Pfade erlauben
 }
 
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8">
   <title>Login</title>
-  <link rel="stylesheet" href="/family-media/public/css/app.css">
+  <link rel="stylesheet" href="/Journeys-media/public/css/app.css">
   <style>
     .center-wrap{min-height:100vh;display:grid;place-items:center;padding:24px}
     .auth-card{width:min(420px, 92vw)}
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="password" name="password" autocomplete="current-password" required>
 
         <div class="auth-footer">
-          <a class="link" href="/family-media/public/register.php">Create account</a>
+          <a class="link" href="/Journeys-media/public/register.php">Create account</a>
           <button type="submit" class="btn">Login</button>
         </div>
       </form>

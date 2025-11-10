@@ -41,7 +41,7 @@ if ($countryCode) {
 <head>
   <meta charset="utf-8">
   <title>Country Details - <?= htmlspecialchars($countryName) ?></title>
-  <link rel="stylesheet" href="/family-media/public/css/app.css">
+  <link rel="stylesheet" href="/Journeys-media/public/css/app.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -90,12 +90,12 @@ if ($countryCode) {
 </head>
 <body>
   <h1>Country: <?= htmlspecialchars($countryName) ?></h1>
-  <a href="/family-media/public/index.php">← Back to Map</a>
+  <a href="/Journeys-media/public/index.php">← Back to Map</a>
 
   <?php if (!empty($images)): ?>
     <div class="images-grid">
       <?php foreach ($images as $img): ?>
-        <img src="/family-media/<?= htmlspecialchars($img['file_path']) ?>" 
+        <img src="/Journeys-media/<?= htmlspecialchars($img['file_path']) ?>" 
              alt="<?= htmlspecialchars($img['title']) ?>"
              title="<?= htmlspecialchars($img['title']) ?>">
       <?php endforeach; ?>
