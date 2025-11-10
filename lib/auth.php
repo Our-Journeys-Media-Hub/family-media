@@ -33,3 +33,36 @@ function is_family_admin(PDO $pdo, int $userId, int $familyId): bool {
   $role = $st->fetchColumn();
   return in_array($role, ['owner','admin'], true);
 }
+
+
+function can_view_image(PDO $pdo, int $userId, int $imageId): bool {
+  $sql = "
+    SELECT i.family_id, i.uploaded_by, i.visibility, p.user_id AS allowed_user
+    FROM images i
+    LEFT JOIN image_permissions p ON i.id = p.image_id AND p.user_id = ?
+    WHERE i.id = ?
+    LIMIT 1
+  ";
+  $st = $pdo->prepare($sql);
+  $st->execute([$userId, $imageId]);
+  $img = $st->fetch(PDO::FETCH_ASSOC);
+
+  if (!$img) return false;
+
+  // visibilité = famille
+  if ($img['visibility'] === 'family') {
+    return is_family_member($pdo, $userId, (int)$img['family_id']);
+  }
+
+  // visibilité = privée
+  if ($img['visibility'] === 'private') {
+    return (int)$img['uploaded_by'] === $userId;
+  }
+
+  // visibilité = personnalisée
+  if ($img['visibility'] === 'custom') {
+    return !empty($img['allowed_user']);
+  }
+
+  return false;
+}
