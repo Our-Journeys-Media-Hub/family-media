@@ -27,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $visibility = $_POST['visibility'] ?? 'family';
     $custom_users = $_POST['custom_users'] ?? '';
 
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+    // Check if any files were uploaded
+    if (isset($_FILES['image']) && $_FILES['image']['error'][0] === 0) {
         $uploadDir = __DIR__ . '/../images/' . $country . '/';
 
         // Create the directory if it doesn't exist, with permissions 0777
@@ -42,37 +43,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("❌ Directory $uploadDir is not writable by PHP");
         }
 
-        $filename = basename($_FILES['image']['name']);
-        $targetFile = $uploadDir . $filename;
+        // Loop through each file uploaded
+        foreach ($_FILES['image']['name'] as $index => $fileName) {
+            $filename = basename($fileName);
+            $targetFile = $uploadDir . $filename;
 
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
-            $filePath = "images/$country/$filename";
+            // Move the uploaded file to the target directory
+            if (move_uploaded_file($_FILES['image']['tmp_name'][$index], $targetFile)) {
+                $filePath = "images/$country/$filename";
 
-            // Insert image into the `images` table
-            $stmt = $pdo->prepare("
-                INSERT INTO images (family_id, uploaded_by, country_code, title, file_path, visibility)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ");
-            $stmt->execute([$family_id, $user['id'], $country, $title, $filePath, $visibility]);
-            $imageId = $pdo->lastInsertId();
+                // Insert image into the `images` table
+                $stmt = $pdo->prepare("
+                    INSERT INTO images (family_id, uploaded_by, country_code, title, file_path, visibility)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ");
+                $stmt->execute([$family_id, $user['id'], $country, $title, $filePath, $visibility]);
+                $imageId = $pdo->lastInsertId();
 
-            // If visibility is 'custom', insert permissions into image_permissions
-            if ($visibility === 'custom' && !empty($custom_users)) {
-                $users = array_map('trim', explode(',', $custom_users));
-                $stmtPerm = $pdo->prepare("INSERT INTO image_permissions (image_id, user_id) VALUES (?, ?)");
-                foreach ($users as $uid) {
-                    if (is_numeric($uid)) {
-                        $stmtPerm->execute([$imageId, (int)$uid]);
+                // If visibility is 'custom', insert permissions into image_permissions
+                if ($visibility === 'custom' && !empty($custom_users)) {
+                    $users = array_map('trim', explode(',', $custom_users));
+                    $stmtPerm = $pdo->prepare("INSERT INTO image_permissions (image_id, user_id) VALUES (?, ?)");
+                    foreach ($users as $uid) {
+                        if (is_numeric($uid)) {
+                            $stmtPerm->execute([$imageId, (int)$uid]);
+                        }
                     }
                 }
+            } else {
+                echo "❌ Error while uploading the image: $fileName. Please check folder permissions.";
             }
-
-            echo "✅ Image uploaded successfully!";
-        } else {
-            echo "❌ Error while uploading the image. Please check folder permissions.";
         }
+
+        echo "✅ Images uploaded successfully!";
     } else {
-        echo "❌ No file selected or upload error.";
+        echo "❌ No files selected or upload error.";
     }
 }
 ?>
@@ -112,8 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="custom_users">Allowed Users (for custom, enter user IDs separated by commas):</label>
     <input type="text" name="custom_users" id="custom_users"><br>
 
-    <label for="image">File:</label>
-    <input type="file" name="image" id="image" accept="image/*" required><br><br>
+    <label for="image">Files (multiple files allowed, JPG, PNG, GIF, MP4, MOV):</label>
+    <input type="file" name="image[]" id="image" accept="image/*,video/*" multiple required><br><br>
 
     <button type="submit">Upload</button>
 </form>

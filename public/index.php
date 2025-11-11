@@ -34,6 +34,8 @@ require_login();
     <a href="/Journeys-media/public/groups.php?view=list">Groups</a>
     <a href="/Journeys-media/public/groups.php?view=myinvites">My invites</a>
     <a href="/Journeys-media/public/logout.php">Logout</a>
+    <!-- Add a button that links to the upload page -->
+    <button onclick="window.location.href='/Journeys-media/public/upload_image.php'">Upload Image</button>
   </div>
 </nav>
 
