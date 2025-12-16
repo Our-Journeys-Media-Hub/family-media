@@ -86,41 +86,116 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8">
   <title>Upload Image</title>
+  <link rel="stylesheet" href="css/app.css">
+  <style>
+    body {
+        background-color: #000;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+    .upload-container {
+      padding: 40px;
+      background-color: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 500px;
+    }
+    .upload-container h1 {
+      margin-top: 0;
+      margin-bottom: 25px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+    }
+    .upload-container label {
+      font-size: 14px;
+      color: #ccc;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .upload-container input,
+    .upload-container select,
+    .upload-container button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background-color: #222;
+      color: #fff;
+      box-sizing: border-box; /* Ensure padding doesn't affect width */
+    }
+    .upload-container input:focus,
+    .upload-container select:focus {
+      outline: none;
+      border-color: #5a67d8;
+    }
+    .upload-container input[type="file"] {
+      padding: 10px;
+      background-color: #222;
+    }
+    .upload-container button {
+        background-color: #5a67d8;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+    }
+    .upload-container button:hover {
+        background-color: #434190;
+    }
+  </style>
 </head>
 <body>
-<h1>Upload Image</h1>
-<form action="upload_image.php" method="post" enctype="multipart/form-data">
-    <label for="title">Title:</label>
-    <input type="text" name="title" id="title" required><br>
 
-    <label for="country">Country:</label>
-    <select name="country" id="country" required>
-        <?php foreach ($countryList as $code => $name): ?>
-            <option value="<?= $code ?>"><?= htmlspecialchars($name) ?></option>
-        <?php endforeach; ?>
-    </select><br>
+<div class="upload-container">
+    <h1>Upload Image</h1>
+    <form action="upload_image.php" method="post" enctype="multipart/form-data">
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title" required>
 
-    <label for="family">Family:</label>
-    <select name="family" id="family" required>
-        <?php foreach ($families as $f): ?>
-            <option value="<?= $f['id'] ?>"><?= htmlspecialchars($f['family_name']) ?></option>
-        <?php endforeach; ?>
-    </select><br>
+        <label for="country">Country:</label>
+        <select name="country" id="country" required>
+            <?php foreach ($countryList as $code => $name): ?>
+                <option value="<?= $code ?>"><?= htmlspecialchars($name) ?></option>
+            <?php endforeach; ?>
+        </select>
 
-    <label for="visibility">Visibility:</label>
-    <select name="visibility" id="visibility" required>
-        <option value="family">Family</option>
-        <option value="private">Private</option>
-        <option value="custom">Custom</option>
-    </select><br>
+        <label for="family">Family:</label>
+        <select name="family" id="family" required>
+            <?php foreach ($families as $f): ?>
+                <option value="<?= $f['id'] ?>"><?= htmlspecialchars($f['family_name']) ?></option>
+            <?php endforeach; ?>
+        </select>
 
-    <label for="custom_users">Allowed Users (for custom, enter user IDs separated by commas):</label>
-    <input type="text" name="custom_users" id="custom_users"><br>
+        <label for="visibility">Visibility:</label>
+        <select name="visibility" id="visibility" required>
+            <option value="family">Family</option>
+            <option value="private">Private</option>
+            <option value="custom">Custom</option>
+        </select>
 
-    <label for="image">Files (multiple files allowed, JPG, PNG, GIF, MP4, MOV):</label>
-    <input type="file" name="image[]" id="image" accept="image/*,video/*" multiple required><br><br>
+        <label for="custom_users">Allowed Users (for custom, enter user IDs separated by commas):</label>
+        <input type="text" name="custom_users" id="custom_users">
 
-    <button type="submit">Upload</button>
-</form>
+        <label for="image">Files (multiple files allowed, JPG, PNG, GIF, MP4, MOV):</label>
+        <input type="file" name="image[]" id="image" accept="image/*,video/*" multiple required>
+
+        <button type="submit">Upload</button>
+    </form>
+    <div style="text-align: center; margin-top: 15px;">
+        <a href="index.php" style="color: #ccc; text-decoration: none; font-size: 14px;">&larr; Back to Map</a>
+    </div>
+</div>
+
 </body>
 </html>
