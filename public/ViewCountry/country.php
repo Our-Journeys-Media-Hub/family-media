@@ -240,25 +240,76 @@ h1 {
   background-color: #434190;
 }
 
-#lightbox {
+/* Lightbox */
+.lightbox {
   display: none;
   position: fixed;
   z-index: 9999;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  inset: 0;
+  background: rgba(0,0,0,0.85);
   align-items: center;
   justify-content: center;
 }
 
-  #lightbox img, #lightbox video {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 8px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+.lightbox.is-open { display: flex; }
+
+.lightbox .lb-content {
+  position: relative;
+  max-width: 92vw;
+  max-height: 92vh;
 }
+
+#lightbox-img,
+#lightbox-video {
+  max-width: 92vw;
+  max-height: 92vh;
+  border-radius: 10px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.5);
+  background: #000;
+}
+
+/* Close button */
+.lb-close {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.lb-close:hover { background: rgba(255,255,255,0.2); }
+
+/* Nav arrows */
+.lb-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 64px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 34px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lb-nav:hover { background: rgba(255,255,255,0.2); }
+
+.lb-prev { left: 18px; }
+.lb-next { right: 18px; }
+
+@media (max-width: 700px) {
+  .lb-nav { width: 42px; height: 56px; font-size: 30px; }
+}
+
 
 .media-item {
   position: relative;
@@ -435,9 +486,6 @@ h1 {
           <option value="custom">Custom</option>
         </select><br>
 
-        <label for="custom_users">Allowed Users (for custom, enter user IDs separated by commas):</label>
-        <input type="text" name="custom_users" id="custom_users"><br>
-
         <label for="image">File:</label>
         <input type="file" name="image[]" id="image" accept="image/*,video/*" multiple required><br><br>
 
@@ -446,114 +494,178 @@ h1 {
     </div>
   </div>
 
-  <div id="lightbox" onclick="this.style.display='none'">
-    <img id="lightbox-img" src="" alt="">
+ <div id="lightbox" class="lightbox">
+  <button type="button" class="lb-close" aria-label="Close">&times;</button>
+
+  <button type="button" class="lb-nav lb-prev" aria-label="Previous">&#10094;</button>
+  <button type="button" class="lb-nav lb-next" aria-label="Next">&#10095;</button>
+
+  <div class="lb-content" role="dialog" aria-modal="true">
+    <img id="lightbox-img" alt="" style="display:none;">
+    <video id="lightbox-video" controls style="display:none;">
+      <source id="lightbox-video-src" src="" type="">
+    </video>
   </div>
+</div>
+
 
   <script>
-    const container = document.querySelector('.images-container');
-    const sortSelect = document.getElementById('sortDate');
-    const filterSelect = document.getElementById('filterType');
-    
-    // Lightbox logic
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
+  const container = document.querySelector('.images-container');
+  const sortSelect = document.getElementById('sortDate');
+  const filterSelect = document.getElementById('filterType');
 
-    function attachLightboxEvents() {
-        const images = document.querySelectorAll('.images-container .media-item img');
-        const videos = document.querySelectorAll('.images-container .media-item video');
-    
-        images.forEach(img => {
-          img.addEventListener('click', () => {
-            lightboxImg.src = img.src;
-            lightbox.style.display = 'flex';
-          });
-        });
-    
-        videos.forEach(video => {
-          video.addEventListener('click', () => {
-             // For video, we might want to show it in a video tag in lightbox, 
-             // currently the lightbox only has an img tag. 
-             // Keeping original behavior where it puts video src in img (which might fail or just show poster if set)
-             // or maybe the user wants to play it. 
-             // Given the original code: "lightboxImg.src = video.src", this suggests it might not play properly 
-             // if lightbox-img is an <img> tag. But I will respect existing logic or improve it slightly 
-             // if I can. The user asked for filter, not lightbox fix.
-             // I'll stick to preserving existing behavior but re-attaching events is crucial if I re-render,
-             // but here I am just hiding/showing or re-appending elements, so events *should* persist
-             // as long as I don't destroy the elements.
-          });
-        });
+  // Lightbox elements
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+  const lbVideo = document.getElementById('lightbox-video');
+  const lbVideoSrc = document.getElementById('lightbox-video-src');
+  const btnClose = lightbox.querySelector('.lb-close');
+  const btnPrev = lightbox.querySelector('.lb-prev');
+  const btnNext = lightbox.querySelector('.lb-next');
+  const lbContent = lightbox.querySelector('.lb-content');
+
+  // Keep original items for filter/sort
+  const originalItems = Array.from(container.children);
+
+  // Lightbox state
+  let currentIndex = -1;
+
+  function getVisibleItems() {
+    // After filter/sort, container has only visible items
+    return Array.from(container.querySelectorAll('.media-item'));
+  }
+
+  function stopVideo() {
+    try { lbVideo.pause(); } catch (e) {}
+    lbVideo.removeAttribute('src');
+    lbVideoSrc.src = '';
+    lbVideoSrc.type = '';
+    lbVideo.load();
+  }
+
+  function showImage(src, altText = '') {
+    stopVideo();
+    lbVideo.style.display = 'none';
+
+    lbImg.src = src;
+    lbImg.alt = altText || '';
+    lbImg.style.display = 'block';
+  }
+
+  function showVideo(src, mimeType = '') {
+    lbImg.style.display = 'none';
+    lbImg.src = '';
+
+    stopVideo();
+    lbVideoSrc.src = src;
+    lbVideoSrc.type = mimeType || 'video/mp4';
+    lbVideo.load();
+    lbVideo.style.display = 'block';
+  }
+
+  function openLightbox(index) {
+    const items = getVisibleItems();
+    if (!items.length) return;
+
+    // clamp index
+    if (index < 0) index = items.length - 1;
+    if (index >= items.length) index = 0;
+
+    currentIndex = index;
+
+    const item = items[currentIndex];
+    const type = item.getAttribute('data-type');
+
+    if (type === 'video') {
+      const sourceEl = item.querySelector('video source');
+      const src = sourceEl ? sourceEl.getAttribute('src') : '';
+      const ext = src.split('.').pop().toLowerCase();
+      const mime = ext ? `video/${ext === 'mov' ? 'quicktime' : ext}` : 'video/mp4';
+      showVideo(src, mime);
+    } else {
+      const imgEl = item.querySelector('img');
+      const src = imgEl ? imgEl.getAttribute('src') : '';
+      const alt = imgEl ? (imgEl.getAttribute('alt') || '') : '';
+      showImage(src, alt);
     }
 
-    // Since I'm only re-ordering or hiding elements, I don't need to re-attach listeners 
-    // IF I treat them as DOM nodes.
+    lightbox.classList.add('is-open');
+  }
 
-    const originalItems = Array.from(container.children);
+  function closeLightbox() {
+    lightbox.classList.remove('is-open');
+    lbImg.src = '';
+    lbImg.style.display = 'none';
+    stopVideo();
+    currentIndex = -1;
+  }
 
-    function updateGallery() {
-        const sortMode = sortSelect.value;
-        const filterMode = filterSelect.value;
+  function nextItem() {
+    if (!lightbox.classList.contains('is-open')) return;
+    openLightbox(currentIndex + 1);
+  }
 
-        // Filter
-        let visibleItems = originalItems.filter(item => {
-            const itemType = item.getAttribute('data-type');
-            if (filterMode === 'all') return true;
-            return itemType === filterMode;
-        });
+  function prevItem() {
+    if (!lightbox.classList.contains('is-open')) return;
+    openLightbox(currentIndex - 1);
+  }
 
-        // Sort
-        visibleItems.sort((a, b) => {
-            const dateA = new Date(a.getAttribute('data-date'));
-            const dateB = new Date(b.getAttribute('data-date'));
-            return sortMode === 'newest' ? dateB - dateA : dateA - dateB;
-        });
+  function updateGallery() {
+    const sortMode = sortSelect.value;
+    const filterMode = filterSelect.value;
 
-        // Render
-        container.innerHTML = '';
-        visibleItems.forEach(item => container.appendChild(item));
-        
-        // Note: filtered-out items are removed from DOM. 
-        // If we want to keep them but hide them, we could use style.display,
-        // but removing/appending is fine for re-sorting.
-        
-        // Re-attach lightbox events? 
-        // No, the elements are the same objects, listeners are preserved.
-        // But the original "images" and "videos" nodelists in the previous script 
-        // are static or won't cover these moved elements if specific logic was tied to index? 
-        // The original logic was:
-        // images.forEach(...) adding click listener.
-        // Moving the element in DOM does not remove listeners.
-    }
-
-    sortSelect.addEventListener('change', updateGallery);
-    filterSelect.addEventListener('change', updateGallery);
-
-    // Initial Lightbox Setup (Preserving original logic style)
-    const images = document.querySelectorAll('.images-container .media-item img');
-    const videos = document.querySelectorAll('.images-container .media-item video');
-
-    images.forEach(img => {
-      img.addEventListener('click', () => {
-        lightboxImg.src = img.src;
-        lightbox.style.display = 'flex';
-      });
+    let visibleItems = originalItems.filter(item => {
+      const itemType = item.getAttribute('data-type');
+      if (filterMode === 'all') return true;
+      return itemType === filterMode;
     });
 
-    videos.forEach(video => {
-      video.addEventListener('click', () => {
-        // Warning: Original code put video src into img tag. 
-        // If it works for the user, I leave it.
-        lightboxImg.src = video.currentSrc || video.src; 
-        lightbox.style.display = 'flex';
-      });
+    visibleItems.sort((a, b) => {
+      const dateA = new Date(a.getAttribute('data-date'));
+      const dateB = new Date(b.getAttribute('data-date'));
+      return sortMode === 'newest' ? dateB - dateA : dateA - dateB;
     });
 
-    lightbox.addEventListener('click', () => {
-      lightbox.style.display = 'none';
-      lightboxImg.src = '';
-    });
-  </script>
+    container.innerHTML = '';
+    visibleItems.forEach(item => container.appendChild(item));
+  }
+
+  // Click on grid (event delegation)
+  container.addEventListener('click', (e) => {
+    const mediaItem = e.target.closest('.media-item');
+    if (!mediaItem) return;
+
+    // Block delete button clicks
+    if (e.target.closest('form')) return;
+
+    const items = getVisibleItems();
+    const index = items.indexOf(mediaItem);
+    if (index >= 0) openLightbox(index);
+  });
+
+  // Filter/sort listeners
+  sortSelect.addEventListener('change', updateGallery);
+  filterSelect.addEventListener('change', updateGallery);
+
+  // Lightbox controls
+  btnClose.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
+  btnNext.addEventListener('click', (e) => { e.stopPropagation(); nextItem(); });
+  btnPrev.addEventListener('click', (e) => { e.stopPropagation(); prevItem(); });
+
+  // Click outside content closes
+  lightbox.addEventListener('click', closeLightbox);
+  lbContent.addEventListener('click', (e) => e.stopPropagation());
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('is-open')) return;
+
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') nextItem();
+    if (e.key === 'ArrowLeft') prevItem();
+  });
+</script>
+
 
 </body>
 </html>

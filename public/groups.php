@@ -173,8 +173,8 @@ function accept_link(string $token, string $scheme, string $host, string $base):
           <label>Family name</label>
           <input name="family_name" required>
 
-          <label>Your relation (optional)</label>
-          <input name="relation_label" placeholder="Vater/Mutter/Kind/Onkel">
+          <label></label>
+          <input name="relation_label" placeholder="Your Name">
 
           <div class="spacer"></div>
           <button type="submit" class="btn">Create</button>

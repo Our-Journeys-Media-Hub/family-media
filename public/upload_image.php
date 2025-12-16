@@ -184,9 +184,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option value="custom">Custom</option>
         </select>
 
-        <label for="custom_users">Allowed Users (for custom, enter user IDs separated by commas):</label>
-        <input type="text" name="custom_users" id="custom_users">
-
         <label for="image">Files (multiple files allowed, JPG, PNG, GIF, MP4, MOV):</label>
         <input type="file" name="image[]" id="image" accept="image/*,video/*" multiple required>
 
