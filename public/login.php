@@ -52,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Login</title>
   <link rel="stylesheet" href="/Journeys-media/public/css/app.css">
   <style>
-    .center-wrap{min-height:100vh;display:grid;place-items:center;padding:24px}
+    .center-wrap{min-height:100vh;display:grid;place-items:center;padding:24px;
+    background-color: #7e7e7eff; color: black}
     .auth-card{width:min(420px, 92vw)}
     .brand{display:flex;gap:10px;align-items:center;margin-bottom:8px}
     .brand .logo{width:34px;height:34px;border-radius:8px;background:#6366f1}

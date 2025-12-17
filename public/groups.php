@@ -121,9 +121,133 @@ function accept_link(string $token, string $scheme, string $host, string $base):
 <!doctype html>
 <html lang="en">
 <head>
+  <style>
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f4f4;
+    color: #222;
+  }
+
+  /* Navigation */
+ nav {
+  background: #7a7a7a;
+  border-bottom: 1px solid #e7e9ee;
+  position: sticky; top: 0; z-index: 10;
+}
+nav .nav-inner { max-width: 1100px; margin: 0 auto; padding: 12px 24px;
+color: black }
+nav a {
+  display: inline-block;
+  padding: 8px 12px;
+  margin-right: 6px;
+  text-decoration: none;
+  color: #00275e;
+  border-radius: 8px;
+}
+nav a:hover { background: #585858; }
+
+
+  /* Page layout */
+  .container.page {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 16px;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+
+  /* Grid */
+  .col,
+  .row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  @media (max-width: 800px) {
+    .col,
+    .row {
+      flex-direction: column;
+    }
+  }
+
+  /* Cards */
+  .card {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 16px;
+    flex: 1;
+  }
+
+  /* Buttons */
+  .btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    background: #a3b4e4ff;
+  }
+
+  .btn-secondary {
+    color: #000000ff;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  /* Forms */
+  input,
+  select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  /* Alerts */
+  .alert {
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+  }
+
+  .alert-error {
+    background: #fee2e2;
+    color: #7f1d1d;
+  }
+
+  .alert-success {
+    background: #dcfce7;
+    color: #14532d;
+  }
+
+  /* Helpers */
+  .muted {
+    color: #666;
+    font-size: 14px;
+  }
+
+  .spacer {
+    height: 12px;
+  }
+</style>
+
   <meta charset="utf-8">
   <title>Groups</title>
-  <link rel="stylesheet" href="/Journeys-media/public/css/app.css">
 </head>
 <body>
 

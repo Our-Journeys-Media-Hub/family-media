@@ -44,8 +44,11 @@ sort($uploadedCountries);
   <style>
     :root { --nav-h: 56px; }
     html, body { height: 100%; }
-    body { margin: 0; }
-    nav  { position: sticky; top: 0; z-index: 10; }
+    body { margin: 0; 
+    background-color: #ffffffff}
+    nav  { position: sticky; top: 0; z-index: 10; 
+    background-color: #686868ff
+  }
     #worldmap {
       position: fixed;
       top: var(--nav-h);
@@ -92,7 +95,7 @@ sort($uploadedCountries);
     regionStyle: {
       initial:  { fill: '#8d8d8dff' },
       hover:    { fill: '#070000ff' },
-      selected: { fill: '#4100aaff' }
+      selected: { fill: '#009b40ff' }
     },
 
     selectedRegions: uploadedCountries,
