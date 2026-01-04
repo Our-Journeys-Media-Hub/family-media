@@ -111,7 +111,7 @@ if ($view === 'family' && $familyId > 0) {
 }
 
 // Dynamische Basis-URL für Links
-$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$scheme = !empty($_SERVER['HTTPS']);
 $host   = $_SERVER['HTTP_HOST'];
 $base   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 function accept_link(string $token, string $scheme, string $host, string $base): string {
